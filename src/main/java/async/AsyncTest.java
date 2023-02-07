@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * You should complete the function in this class
  */
+
 class AsyncTest {
 
   private static List<Enterprise> enterprises = List.of(
@@ -23,15 +24,19 @@ class AsyncTest {
   );
 
   public static CompletableFuture<Option<Ceo>> getCeoById(String ceo_id) {
-    return null;
+    return CompletableFuture.supplyAsync(() -> ceos.find(ceo -> ceo.id.equals(ceo_id)));
+
   }
 
   public static CompletableFuture<Option<Enterprise>> getEnterpriseByCeoId(String ceo_id) {
-    return null;
+    return CompletableFuture.supplyAsync(() -> enterprises.find(enterprises -> enterprises.ceo_id.equals(ceo_id)));
   }
 
   public static CompletableFuture<Tuple2<Option<Ceo>, Option<Enterprise>>> getCEOAndEnterprise(String ceo_id) {
-    return null;
+    CompletableFuture<Option<Ceo>> futureCeo = getCeoById(ceo_id);
+    CompletableFuture<Option<Enterprise>> futureEnterprise = getEnterpriseByCeoId(ceo_id);
+
+    return futureCeo.thenCombine(futureEnterprise, (ceo, enterprise) -> Tuple.of(ceo, enterprise));
   }
 
 }
